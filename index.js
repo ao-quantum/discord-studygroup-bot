@@ -170,4 +170,4 @@ Client.on("messageReactionAdd", (reaction, user) => {
     })
 })
 
-Client.login()
+Client.login(config.token)
