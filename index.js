@@ -50,11 +50,10 @@ Client.on("message", msg => {
             msg.guild.voice?.connection?.disconnect();
             break;
         case 'pvc':
-            msg.delete();
             db.get(`SELECT * FROM users WHERE id = '${msg.author.id}'`, (err, rows) => {
                 if (err) throw err;
 
-                if (rows.pvc) return msg.author.send("You already have a private voice channel");
+                if (!rows || rows.pvc) return msg.author.send("You already have a private voice channel");
 
                 const category = msg.guild.channels.resolve(config.privatevc_cagegory);
 
@@ -81,7 +80,6 @@ Client.on("message", msg => {
                         }
                     ]
                 }).then(ch => {
-                    msg.delete();
                     msg.author.send("Created your private voice channel");
 
                     db.run(`UPDATE users SET pvc = '${ch.id}' WHERE id = '${msg.author.id}'`)
@@ -94,7 +92,7 @@ Client.on("message", msg => {
             db.get(`SELECT * FROM users WHERE id = '${msg.author.id}'`, (err, rows) => {
                 if (err) throw err;
 
-                if (!rows.pvc) {
+                if (!rows || !rows.pvc) {
                     return msg.author.send("You don't have a private voice channel")
                 }
                 
@@ -112,7 +110,7 @@ Client.on("message", msg => {
             db.get(`SELECT * FROM users WHERE id = '${msg.author.id}'`, (err, user) => {
                 if (err) throw err;
 
-                if (!user.pvc) {
+                if (!user || !user.pvc) {
                     return msg.author.send("You don't have a private vc")
                 }
 
